@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { FormGroup, AbstractControl } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { ValidarCamposService } from '../validar-campos.service';
 
 @Component({
@@ -7,7 +7,7 @@ import { ValidarCamposService } from '../validar-campos.service';
   templateUrl: './input-text.component.html',
   styleUrls: ['./input-text.component.css']
 })
-export class InputTextComponent {
+export class InputTextComponent implements OnInit {
 
   @Input() titulo: string;
   @Input() formGroup: FormGroup;
@@ -15,8 +15,17 @@ export class InputTextComponent {
 
   constructor(public validacao: ValidarCamposService) { }
 
-  get formControl(): AbstractControl {
+  /*
+    a validação dos elementos quanto aos erros agora está
+    relacionado com o ngInit do componente, onde especificamos
+    quais são as validações que serão feitas, referente aos campos.
+    Ou seja, essa verificação ficou dinâmica.
+  */
+  get formControl():AbstractControl{
     return this.formGroup.controls[this.controlName];
+  }
+
+  ngOnInit(): void {
   }
 
 }

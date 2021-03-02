@@ -6,7 +6,9 @@ import { InputDateComponent } from './input-date/input-date.component';
 import { InputTextareaComponent } from './input-textarea/input-textarea.component';
 import { InputSelectComponent } from './input-select/input-select.component';
 import { MaterialModule } from '../../material/material.module';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+
 
 @NgModule({
   declarations: [
