@@ -1,0 +1,130 @@
+<mat-toolbar class="app-title">Cadastrar Filme</mat-toolbar>
+<div class="main-div">
+  <mat-card class="center width50">
+      <!--
+        Essa tag de form indica a relação entre o HTML e o formGroup criado
+        no arquivo TS.
+        cadastro: FormGroup;
+      -->
+      <form [formGroup]="cadastro" (ngSubmit)="salvar()" (ngReset)="reiniciarForm()">
+        <mat-card-content>
+          <mat-form-field class="full-width">
+            <!--
+              A tag formControlName faz ligação com cada um dos elementos que
+              criamos no formGroup
+              titulo: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(256)]]
+            -->
+            <input matInput placeholder="Título *" name="titulo" formControlName="titulo">
+            <!--
+              <mat-error *ngIf="(cadastro.touched || cadastro.dirty) && cadastro.get('titulo').errors" >MENSAGEM DE ERRO!</mat-error>
+              para abreviar a parte de captura do elemento no cadastro, criou-se a função get abaixo.
+               get f() {
+                return this.cadastro.controls;
+              }
+              com isso, todos os controles são acessíveis a partir de f.
+            -->
+
+            <!--nome das propriedades no erro fica toda minúscula-->
+            <!--
+              é necessário colocar a verificação && f.titulo.errors pq ao remover o erro do campo, esse objeto deixa de existir e se
+              não testarmos se existe erro, tomamos um erro dizendo que o objeto errors é undefined, pois deixou de existir
+              TAG
+              <mat-error *ngIf="(cadastro.touched || cadastro.dirty) && f.titulo.errors.required">Campo Obrigatório</mat-error>
+              ERRO CONSOLE
+              ERROR TypeError: Cannot read property 'required' of null
+                  at Object.eval [as updateDirectives] (CadastroFilmesComponent.html:28)
+                  at Object.debugUpdateDirectives [as updateDirectives] (core.js:45259)
+                  at checkAndUpdateView (core.js:44271)
+                  at callViewAction (core.js:44637)
+                  at execComponentViewsAction (core.js:44565)
+                  at checkAndUpdateView (core.js:44278)
+                  at callViewAction (core.js:44637)
+                  at execEmbeddedViewsAction (core.js:44594)
+                  at checkAndUpdateView (core.js:44272)
+                  at callViewAction (core.js:44637)
+            -->
+            <!--
+              Para resolver basta colocarmos o ?
+              TAG ANTERIOR
+              <mat-error *ngIf="(cadastro.touched || cadastro.dirty) && f.titulo.errors && f.titulo.errors.required">Campo Obrigatório</mat-error>
+              FICA ASSIM
+              <mat-error *ngIf="(cadastro.touched || cadastro.dirty) && f.titulo.errors?.required">Campo Obrigatório</mat-error>
+              só verifica required SE HOUVER O ERRO
+            -->
+
+            <!--
+              Criação de um serviço para tratar os erros e impedir códigos repetidos como abaixo.
+              CONSOLE
+              Dependencia de promise que não estava no cprojeto inicial, --save-dev só fica em ds,
+              não vai no deploy do projeto
+
+              npm install @schematics/angular@11.2.2 --save-dev
+              ng g s shared/components/campos/validarCampos
+              
+              Antes do serviço ser criado:
+              <mat-error *ngIf="(cadastro.touched || cadastro.dirty) && f.titulo.errors?.required">Campo Obrigatório</mat-error>
+              <mat-error *ngIf="(cadastro.touched || cadastro.dirty) && f.titulo.errors?.minlength">Campo deve ter no mínimo 2 caracteres</mat-error>
+              <mat-error *ngIf="(cadastro.touched || cadastro.dirty) && f.titulo.errors?.maxlength">Campo deve ter no máximo 256 caracteres</mat-error>
+
+              <mat-error *ngIf="(cadastro.touched || cadastro.dirty) && validacao.hasError(f.titulo,'required')">Campo Obrigatório</mat-error>
+            <mat-error *ngIf="(cadastro.touched || cadastro.dirty) && validacao.hasError(f.titulo,'minlength')">Campo deve ter no mínimo 2 caracteres</mat-error>
+            <mat-error *ngIf="(cadastro.touched || cadastro.dirty) && validacao.hasError(f.titulo,'maxlength')">Campo deve ter no máximo 256 caracteres</mat-error>
+
+            pode-se observar que existem muitos códigos repetidos, e com isso a manutenção fica complicada de ser efetuada.
+            um dos conceitos do Angular é 'componentizar' nossos elementos, assim sendo, vamos fazer isso agora:
+            //criação do módulo primeiro
+            ng g m shared/components/campos nospec
+            //criação de cada um dos tipos de campos que utilizamos
+            ng g c shared/components/campos/input-text --nospec
+            ng g c shared/components/campos/input-number --nospec
+            ng g c shared/components/campos/input-date --nospec
+            ng g c shared/components/campos/input-textarea --nospec
+            ng g c shared/components/campos/input-select --nospec
+            -->
+            <mat-error *ngIf="validacao.hasErrorValidate(f.titulo,'required')">Campo Obrigatório</mat-error>
+            <mat-error *ngIf="validacao.hasErrorValidate(f.titulo,'minlength')">Campo deve ter no mínimo 2 caracteres</mat-error>
+            <mat-error *ngIf="validacao.hasErrorValidate(f.titulo,'maxlength')">Campo deve ter no máximo 256 caracteres</mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Link Foto" name="urlFoto" formControlName="urlFoto">            
+            <mat-error *ngIf="validacao.hasErrorValidate(f.urlFoto,'minlength')">Campo deve ter no mínimo 10 caracteres</mat-error>            
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <input matInput readonly [matDatepicker]="picker" placeholder="Data de Lançamento *" name="dtLancamento" formControlName="dtLancamento" (click)="picker.open()">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="validacao.hasErrorValidate(f.dtLancamento,'required')">Campo Obrigatório</mat-error>
+          </mat-form-field>
+          <mat-form-field class="full-width">
+            <textarea matInput placeholder="Descrição" name="descricao" formControlName="descricao"></textarea>
+          </mat-form-field>
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Nota IMDb *" type="number" min="0" max="10" step="0.1" name="notaIMDb" formControlName="notaIMDb">
+            <mat-error *ngIf="validacao.hasErrorValidate(f.notaIMDb,'required')">Campo Obrigatório</mat-error>
+            <mat-error *ngIf="validacao.hasErrorValidate(f.notaIMDb,'max')">Valor máximo permitido é 10</mat-error>
+            <mat-error *ngIf="validacao.hasErrorValidate(f.notaIMDb,'min')">Valor mínimo permitido é 0</mat-error>
+          </mat-form-field>
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Link IMDb" name="urlIMDb" formControlName="urlIMDb">
+            <mat-error *ngIf="validacao.hasErrorValidate(f.urlIMDb,'minlength')">Campo deve ter no mínimo 10 caracteres</mat-error>            
+          </mat-form-field>
+          <mat-form-field class="full-width">
+            <mat-select placeholder="Gênero *" name="genero" formControlName="genero">
+              <mat-option value="Ação">Ação</mat-option>
+              <mat-option value="Aventura">Aventura</mat-option>
+              <mat-option value="Ficção Científica">Ficção Científica</mat-option>
+              <mat-option value="Romance">Romance</mat-option>
+              <mat-option value="Terror">Terror</mat-option>
+            </mat-select>
+            <mat-error *ngIf="validacao.hasErrorValidate(f.genero,'required')">Campo Obrigatório</mat-error>
+          </mat-form-field>
+        </mat-card-content>
+        <mat-card-actions>
+          <button type="submit" color="accent" mat-raised-button>Salvar</button>
+          <button type="reset" color="warn" mat-raised-button>Cancelar</button>
+        </mat-card-actions>    
+      </form>
+  </mat-card>
+</div>

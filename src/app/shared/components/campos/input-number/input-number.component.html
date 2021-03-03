@@ -1,1 +1,19 @@
-<p>input-number works!</p>
+<div [formGroup]="formGroup">
+    <mat-form-field class="full-width">
+        <input  matInput
+                [placeholder]="titulo"
+                type="number"
+                [min]="minimo"
+                [max]="maximo"
+                [step]="passo"
+                [name]="controlName"
+                [formControlName]="controlName">
+        <!--
+            formControl é a função escrita no TS para devolver o objeto HTML sendo
+            verificado neste momento.
+       
+        <mat-error *ngIf="validacao.hasErrorValidate(formControl,'required')">Campo Obrigatório</mat-error>-->
+        <mat-error *ngIf="validacao.hasErrorValidate(formControl,'max')">Valor máximo permitido é 10</mat-error>
+        <mat-error *ngIf="validacao.hasErrorValidate(formControl,'min')">Valor mínimo permitido é 0</mat-error>         
+  </mat-form-field>
+</div>
