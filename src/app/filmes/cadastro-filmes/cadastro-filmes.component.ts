@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { FilmesService } from 'src/app/core/filmes.service';
+import { AlertaComponent } from 'src/app/shared/components/alerta/alerta.component';
 import { ValidarCamposService } from 'src/app/shared/components/campos/validar-campos.service';
+import { Alerta } from 'src/app/shared/models/alerta';
+import { Filme } from 'src/app/shared/models/filme';
 
 
 @Component({
@@ -18,10 +24,14 @@ export class CadastroFilmesComponent implements OnInit {
   //validado e manipulado pelo Angular
   //https://angular.io/api/forms/FormBuilder
   cadastro: FormGroup;
+  generos: Array<string>;
   
   constructor(
     public validacao: ValidarCamposService,
-    private fb: FormBuilder
+    public dialog: MatDialog,
+    private fb: FormBuilder,
+    private filmeService: FilmesService,
+    private router: Router
   ) { }
 
   get f() {
@@ -43,24 +53,79 @@ export class CadastroFilmesComponent implements OnInit {
       notaIMDb: [0, [Validators.required, Validators.min(0), Validators.max(10)]],
       urlIMDb: ['',[Validators.minLength(10)]],
       genero: ['',[Validators.required]]
-
     });
+
+    this.generos = ["Ação","Aventura","Romance","Terror","Ficção Científica", "Comédia", "Drama"];
   }
 
 
   //por padrão os métodos são publicos
   // public salvar(): void
-  salvar(): void{
-    //esse cara dispara as validações de erro em todo
-    //o form sem precisarmos clicar em todos
+  // salvar(): void{
+  //   //esse cara dispara as validações de erro em todo
+  //   //o form sem precisarmos clicar em todos
+  //   this.cadastro.markAllAsTouched();
+  //   if (this.cadastro.invalid){
+  //     return;
+  //   }
+  //   alert("SUCESSO! " + JSON.stringify(this.cadastro.value,null));
+  // }
+
+  //após gerar o core/filmes.service, implementamos o método que realmente 
+  //salva no nosso mock backend  
+  submit(){
     this.cadastro.markAllAsTouched();
     if (this.cadastro.invalid){
       return;
     }
-    alert("SUCESSO! " + JSON.stringify(this.cadastro.value,null));
+    //getRawValue retorna os campos que existam no cadastro
+    //é importante que os nomes do cadastro tenham exatamente o 
+    //mesmo nome dos campos do nosso backend, logo, convertemos
+    //o objeto retornado utilzando o "as Interface" 
+    const filme = this.cadastro.getRawValue() as Filme;
+    this.salvar(filme);
   }
 
   reiniciarForm():void{
     this.cadastro.reset();
   }
+
+  private salvar(filme: Filme): void{
+    this.filmeService.salvar(filme).subscribe(() => {
+      //SUCESSO
+      const config = {
+        data: {
+          btnSucesso: "Ir para listagem",
+          btnCancelar: "Cadastrar um novo filme",
+          corBtnCancelar: "primary",
+          possuirBtnCancelar: true
+        } as Alerta
+      };
+
+      const dialogRef = this.dialog.open(AlertaComponent, config);
+      //esse subscribe recebe o valor que foi passado no
+      //[mat-dialog-close] do html alerta.component.html      
+      dialogRef.afterClosed().subscribe((opcao: boolean) => {
+          if (opcao){
+            this.router.navigateByUrl("filmes");
+          } else {
+            this.reiniciarForm();
+          }
+        });
+      },
+      //ERRO
+      () => {
+        const config = {
+          data: {
+            titulo: "Erro ao salvar o registro!",
+            mensagem: "Não foi possível salvar o registro! Tente novamente mais tarde!",
+            corBtnSucesso: "warn",
+            btnSucesso: "Fechar"          
+          } as Alerta
+        };
+        this.dialog.open(AlertaComponent,config);
+    });
+      //FINALLY - executa sempre
+      //() => {});    
+    }
 }

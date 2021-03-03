@@ -1,13 +1,24 @@
 <div [formGroup]="formGroup">
     <mat-form-field class="full-width">
-        <mat-select 
-            [placeholder]="titulo"            
-            [formControlName]="controlName">
-            <mat-option value="Ação">Ação</mat-option>
-            <mat-option value="Aventura">Aventura</mat-option>
-            <mat-option value="Ficção Científica">Ficção Científica</mat-option>
-            <mat-option value="Romance">Romance</mat-option>
-            <mat-option value="Terror">Terror</mat-option>
+        <mat-select [placeholder]="titulo" [formControlName]="controlName">
+            <mat-option *ngFor="let opcao of opcoes" [value]="opcao">{{opcao}}</mat-option>
+
+            <!--
+                Esse bloco será substituído por um array de valores que será passado
+                para o objeto, deixando assim o select mais dinâmico.
+                <mat-option value="Ação">Ação</mat-option>
+                <mat-option value="Aventura">Aventura</mat-option>
+                <mat-option value="Ficção Científica">Ficção Científica</mat-option>
+                <mat-option value="Romance">Romance</mat-option>
+                <mat-option value="Terror">Terror</mat-option>
+
+                Sim, o primeiro parâmetro de cada campo na criação do formulário é o responsável pelo valor inicial de cada input.
+                
+                É possível passarmos propriedades para os componentes que nós criamos?
+                Sim, só precisamos colocar nos nossos componentes a notação @Input() nome-da-propriedades e quando chamarmos nosso componente passamos o valor desejado ali.
+
+                Elvis Operator ou operador de navegação segura serve para garantir que se a variável no HTML estiver null ou undefined o Angular não tente acessar o valor dela.
+            -->
         </mat-select>
         <mat-error *ngIf="validacao.hasErrorValidate(formControl,'required')">Campo Obrigatório</mat-error>
   </mat-form-field>

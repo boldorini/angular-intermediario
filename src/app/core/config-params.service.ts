@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
-import { ConfigPrams } from '../shared/models/config-prams';
+import { Injectable } from '@angular/core';
+import { ConfigParams } from '../shared/models/config-params';
 
 @Injectable({
   providedIn: 'root'
@@ -9,23 +9,22 @@ export class ConfigParamsService {
 
   constructor() { }
 
-  configurarParametros(config: ConfigPrams): HttpParams {
+  configurarParametros(configParams: ConfigParams): HttpParams{
     let httpParams = new HttpParams();
-    if (config.pagina) {
-      httpParams = httpParams.set('_page', config.pagina.toString());
+    if (configParams.pagina) {
+      httpParams = httpParams.set("_page", configParams.pagina.toString());
     }
-    if (config.limite) {
-      httpParams = httpParams.set('_limit', config.limite.toString());
+    if (configParams.limite) {
+      httpParams = httpParams.set("_limit", configParams.limite.toString());
     }
-    if (config.pesquisa) {
-      httpParams = httpParams.set('q', config.pesquisa);
+    if (configParams.pesquisa) {
+      httpParams = httpParams.set("q", configParams.pesquisa);
     }
-    if (config.campo) {
-      httpParams = httpParams.set(config.campo.tipo, config.campo.valor.toString());
+    if (configParams.campo) {
+      httpParams = httpParams.set(configParams.campo.tipo, configParams.campo.valor.toString());
     }
-    httpParams = httpParams.set('_sort', 'id');
-    httpParams = httpParams.set('_order', 'desc');
-
+    httpParams = httpParams.set("_sort", 'id');
+    httpParams = httpParams.set("_order", 'desc');
     return httpParams;
   }
 }

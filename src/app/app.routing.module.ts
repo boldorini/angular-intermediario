@@ -3,6 +3,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { FilmesModule } from './filmes/filmes.module';
 import { CadastroFilmesComponent } from './filmes/cadastro-filmes/cadastro-filmes.component';
 import { ListagemFilmesComponent } from './filmes/listagem-filmes/listagem-filmes.component';
+import { VisualizarFilmesComponent } from './filmes/visualizar-filmes/visualizar-filmes.component';
+
 
 const routes: Routes = [
 
@@ -17,19 +19,18 @@ const routes: Routes = [
       {
         path: '',
         component: ListagemFilmesComponent
+
+      },
+      {
+        //os 2 pontos na frente do path significa que estamos
+        //informando ao Angular um parâmetro
+        path: ':id',
+        component: VisualizarFilmesComponent
       },
       {
         path: 'cadastro',
-        children: [
-          {
-            path: '',
-            component: CadastroFilmesComponent
-          },
-          {
-            path: ':id',
-            component: CadastroFilmesComponent
-          }
-        ]
+        component: CadastroFilmesComponent,
+        pathMatch: 'full'      
       }
     ]
   },

@@ -1,9 +1,10 @@
+//this.data.possuirBtnCancelar
 export interface Alerta {
-  titulo?: string;
-  descricao?: string;
-  btnSucesso?: string;
-  btnCancelar?: string;
-  corBtnSucesso?: string;
-  corBtnCancelar?: string;
-  possuirBtnFechar?: boolean;
+    titulo?: string;
+    mensagem?: string;
+    btnSucesso?: string;
+    corBtnSucesso?: string;
+    btnCancelar?: string;
+    corBtnCancelar?: string;
+    possuirBtnCancelar?: boolean;
 }

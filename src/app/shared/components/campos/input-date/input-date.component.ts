@@ -11,7 +11,7 @@ export class InputDateComponent{
 
   @Input() titulo: string;
   @Input() controlName: string;
-  @Input() formGroup: FormGroup;
+  @Input() formGroup: FormGroup;  
 
   constructor(public validacao: ValidarCamposService) { }
 

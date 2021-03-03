@@ -1,38 +1,47 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ConfigParams } from '../shared/models/config-params';
 import { Filme } from '../shared/models/filme';
-import { ConfigPrams } from '../shared/models/config-prams';
 import { ConfigParamsService } from './config-params.service';
 
-const url = 'http://localhost:3000/filmes/';
+const url = "http://localhost:3000/filmes/"
 
 @Injectable({
   providedIn: 'root'
 })
 export class FilmesService {
-
+  
   constructor(private http: HttpClient,
-              private configService: ConfigParamsService) { }
+              private configParamsService: ConfigParamsService) { }
 
-  salvar(filme: Filme): Observable<Filme> {
+  salvar(filme: Filme): Observable<Filme>{
     return this.http.post<Filme>(url, filme);
   }
 
-  editar(filme: Filme): Observable<Filme> {
-    return this.http.put<Filme>(url + filme.id, filme);
+  //listar(pagina: number, qtdeRegistrosPorPagina: number, texto: string, genero: string): Observable<Filme[]>{
+  listar(configParams: ConfigParams): Observable<Filme[]>{
+    // let httpParams = new HttpParams();
+    // httpParams = httpParams.set("_page", configParams.pagina.toString());
+    // httpParams = httpParams.set("_limit", configParams.limite.toString());
+    // httpParams = httpParams.set("_sort", 'id');
+    // httpParams = httpParams.set("_order", 'desc');
+    // if (configParams.pesquisa) {
+    //   httpParams = httpParams.set("q", configParams.pesquisa);
+    // }
+    // if (configParams.campo) {
+    //   httpParams = httpParams.set(configParams.campo.tipo, configParams.campo.valor);
+    // }
+    //extraído para config-params.service
+    const config = this.configParamsService.configurarParametros(configParams);
+    return this.http.get<Filme[]>(url,{params: config});
   }
 
-  listar(config: ConfigPrams): Observable<Filme[]> {
-    const configPrams = this.configService.configurarParametros(config);
-    return this.http.get<Filme[]>(url, {params: configPrams});
-  }
-
-  visualizar(id: number): Observable<Filme> {
+  visualizar(id: number): Observable<Filme>{
     return this.http.get<Filme>(url + id);
   }
 
-  excluir(id: number): Observable<void> {
+  excluir(id: number):Observable<void> {
     return this.http.delete<void>(url + id);
   }
 }
