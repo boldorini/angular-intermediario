@@ -41,6 +41,7 @@ export class CadastroFilmesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    //através do activatedRoute podemos capturar os parâmentros da URL ativa
     this.id = this.activatedRoute.snapshot.params["id"];
     if (this.id){
       this.filmeService.visualizar(this.id)
@@ -117,7 +118,12 @@ export class CadastroFilmesComponent implements OnInit {
     //mesmo nome dos campos do nosso backend, logo, convertemos
     //o objeto retornado utilzando o "as Interface" 
     const filme = this.cadastro.getRawValue() as Filme;
-    this.salvar(filme);
+    if (this.id){
+      filme.id = this.id;
+      this.editar(filme);
+    } else {
+      this.salvar(filme);
+    }
   }
 
   reiniciarForm():void{
@@ -162,4 +168,32 @@ export class CadastroFilmesComponent implements OnInit {
       //FINALLY - executa sempre
       //() => {});    
     }
+
+    private editar(filme: Filme): void{
+      this.filmeService.editar(filme).subscribe(() => {
+        //SUCESSO
+        const config = {
+          data: {
+            mensagem: "Seu registro foi atualizado com sucesso!",
+            btnSucesso: "Ir para listagem"
+          } as Alerta
+        };
+  
+        const dialogRef = this.dialog.open(AlertaComponent, config); 
+        dialogRef.afterClosed().subscribe(() => this.router.navigateByUrl("filmes"));
+        },        
+        () => {
+          const config = {
+            data: {
+              titulo: "Erro ao salvar o registro!",
+              mensagem: "Não foi possível salvar o registro! Tente novamente mais tarde!",
+              corBtnSucesso: "warn",
+              btnSucesso: "Fechar"          
+            } as Alerta
+          };
+          this.dialog.open(AlertaComponent,config);
+      });
+        //FINALLY - executa sempre
+        //() => {});    
+      }
 }

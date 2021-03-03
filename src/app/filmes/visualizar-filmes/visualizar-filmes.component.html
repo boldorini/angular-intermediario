@@ -3,7 +3,7 @@
     <mat-list-item>Data Lançamento: {{filme.dtLancamento | date: 'dd/MM/yyyy'}}</mat-list-item>
     <mat-list-item>Gênero: {{filme.genero}}</mat-list-item>
     <mat-list-item class="quebrar-linha">Descrição: {{filme.descricao}}</mat-list-item>
-    <mat-list-item>Nota:<a [href]="filme.urlIMDb" target="_blank">{{filme.nota}}</a></mat-list-item>
+    <mat-list-item>Nota: <a [href]="filme.urlIMDb" target="_blank">{{filme.notaIMDb}}</a></mat-list-item>
     
     <img mat-card-image [src]="filme.urlFoto || semFoto">
     <mat-card>
