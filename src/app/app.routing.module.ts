@@ -22,15 +22,24 @@ const routes: Routes = [
 
       },
       {
+        path: 'cadastro',
+        children: [
+          {
+            path: '',
+            component: CadastroFilmesComponent
+          },
+          {
+            path: ':id',
+            component: CadastroFilmesComponent
+          }
+        ]
+      },
+      {
         //os 2 pontos na frente do path significa que estamos
         //informando ao Angular um parâmetro
         path: ':id',
-        component: VisualizarFilmesComponent
-      },
-      {
-        path: 'cadastro',
-        component: CadastroFilmesComponent,
-        pathMatch: 'full'      
+        component: VisualizarFilmesComponent,
+        pathMatch: 'full'
       }
     ]
   },
